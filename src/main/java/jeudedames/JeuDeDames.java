@@ -108,22 +108,31 @@ public class JeuDeDames {
         // Switch to the next player
         currentPlayer = (currentPlayer == PLAYER_ONE) ? PLAYER_TWO : PLAYER_ONE;
     }
+        /**
+     * Captures all opponent pieces along the path from the starting position to the target position.
+     *
+     * @param fromRow The starting row index.
+     * @param fromCol The starting column index.
+     * @param toRow The target row index.
+     * @param toCol The target column index.
+     * @param playerPiece The type of the piece of the current player.
+     */
+    private void capturePieces(int fromRow, int fromCol, int toRow, int toCol, int playerPiece) {
+        int rowDirection = Integer.signum(toRow - fromRow); // Determine the direction of row movement
+        int colDirection = Integer.signum(toCol - fromCol); // Determine the direction of column movement
 
-        private void capturePieces(int fromRow, int fromCol, int toRow, int toCol, int playerPiece) {
-            int rowDirection = Integer.signum(toRow - fromRow);
-            int colDirection = Integer.signum(toCol - fromCol);
+        int currentRow = fromRow + rowDirection;
+        int currentCol = fromCol + colDirection;
 
-            int currentRow = fromRow + rowDirection;
-            int currentCol = fromCol + colDirection;
-
-            while (currentRow != toRow && currentCol != toCol) {
-                if (board[currentRow][currentCol] != 0) {
-                    board[currentRow][currentCol] = 0; // Capture the piece
-                }
-                currentRow += rowDirection;
-                currentCol += colDirection;
+        // Traverse the path from the starting position to the target position
+        while (currentRow != toRow && currentCol != toCol) {
+            if (board[currentRow][currentCol] != 0) {
+                board[currentRow][currentCol] = 0; // Capture the piece on the path
             }
-}
+            currentRow += rowDirection;
+            currentCol += colDirection;
+        }    
+    }
       
     
     /**
