@@ -89,16 +89,42 @@ public class JeuDeDames {
         } else if (playerPiece == PLAYER_TWO && toRow == 0) {
             board[toRow][toCol] = QUEEN_TWO;
         }
+        
+        //capture
+        int middleRow=(fromRow+toRow)/2;
+        int middleCol=(fromCol+toCol)/2;
+        if(Math.abs(fromCol-toRow)==2){
+            board[middleRow][middleCol]=0;
+        }
+       
+        // Capture logic
+        capturePieces(fromRow, fromCol, toRow, toCol, playerPiece);
 
- 
         // Check if the current player has won
         if (hasWon(currentPlayer)) {
             System.out.println("Player " + currentPlayer + " has won!");
         }
-        
+
         // Switch to the next player
         currentPlayer = (currentPlayer == PLAYER_ONE) ? PLAYER_TWO : PLAYER_ONE;
     }
+
+        private void capturePieces(int fromRow, int fromCol, int toRow, int toCol, int playerPiece) {
+            int rowDirection = Integer.signum(toRow - fromRow);
+            int colDirection = Integer.signum(toCol - fromCol);
+
+            int currentRow = fromRow + rowDirection;
+            int currentCol = fromCol + colDirection;
+
+            while (currentRow != toRow && currentCol != toCol) {
+                if (board[currentRow][currentCol] != 0) {
+                    board[currentRow][currentCol] = 0; // Capture the piece
+                }
+                currentRow += rowDirection;
+                currentCol += colDirection;
+            }
+}
+      
     
     /**
      * Checks if a move is valid.
@@ -122,7 +148,6 @@ public class JeuDeDames {
         if (board[fromRow][fromCol] != currentPlayer) {
             return false;
         }
-        //check if the queen's move is a valid
         
         // Check if the destination is empty
         if (board[toRow][toCol] != 0) {
@@ -135,7 +160,29 @@ public class JeuDeDames {
         if (rowDiff != 1 || colDiff != 1) {
             return false;
         }
-        
+        // Check diagonal move for Player1 and queen one
+        if (currentPlayer == PLAYER_ONE || board[fromRow][fromCol] == QUEEN_ONE) {
+            if (!(rowDiff == 1 && colDiff == 1 || rowDiff == 2 && colDiff == 2)) {
+                return false;
+            }
+        }
+
+        // Check diagonal move for Player2 and queen two
+        if (currentPlayer == PLAYER_TWO || board[fromRow][fromCol] == QUEEN_TWO) {
+            if (!(-rowDiff == 1 && colDiff == 1 || -rowDiff == 2 && colDiff == 2)) {
+                return false;
+            }
+        }
+
+        // Check Capture
+        if (rowDiff == 2 || rowDiff == -2) {
+            int middleRow = (fromRow + toRow) / 2;
+            int middleCol = (fromCol + toCol) / 2;
+            if (board[middleRow][middleCol] == 0 || board[middleRow][middleCol] == currentPlayer || board[middleRow][middleCol] == (currentPlayer == PLAYER_ONE ? QUEEN_ONE : QUEEN_TWO)) {
+                return false;
+            }
+        }
+
         return true;
     }
     
@@ -160,6 +207,10 @@ public class JeuDeDames {
         }
         
         return true;
+    }
+    
+    private boolean isWithinBoard(int row,int col){
+        return row>=0&&row<8&&col>=0&&col<8;
     }
     
     /**
@@ -188,20 +239,39 @@ public class JeuDeDames {
         // Initialize the checkers game
         JeuDeDames game = new JeuDeDames();
         
-        // Make some moves
-        game.makeMove(2, 1, 3, 0);
-        game.makeMove(5, 0, 4, 1);
-        game.makeMove(3, 0, 4, 1);
-        
-        // Print the game board
-        int[][] board = game.getBoard();
+ 
+        // Print the initial board state
+        System.out.println("Initial Board:");
+        printBoard(game.getBoard());
+
+        // Test 1: Move a piece 
+        System.out.println("\\nTest 1: Move a piece");
+        game.makeMove(2, 1, 3, 0); // Player 1 moves
+        game.makeMove(5, 0, 4, 1); // Player 2 moves
+        printBoard(game.getBoard());
+
+        // Test 2: Transform a piece into a queen
+        System.out.println("\\nTest 2: Transform a piece into a queen");
+        game.makeMove(3, 0, 4, 1); // Player 1 captures and should transform into queen
+        printBoard(game.getBoard());
+
+        // Test 3: Capture a piece or a queen 
+        System.out.println("\\nTest 3: Capture a piece or a queen");
+        game.makeMove(4, 1, 5, 0); // Player 1 captures Player 2's piece
+        printBoard(game.getBoard());
+    }
+
+    // Helper method to print the board
+    private static void printBoard(int[][] board) {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 System.out.print(board[row][col] + " ");
             }
             System.out.println();
-        }
     }
 }
+
+}
+
     
 
