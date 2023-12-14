@@ -262,7 +262,7 @@ public class JeuDeDames {
     }
 
     // Helper method to print the board
-    private static void printBoard(int[][] board) {
+    public static void printBoard(int[][] board) {
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 System.out.print(board[row][col] + " ");
